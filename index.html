@@ -40,9 +40,9 @@
 </div>
 
 <script>
-    // Conneting to your specific Supabase project using your keys
+    // These are your exact keys used to connect the website to your database folder
     const SUPABASE_URL = "https://hfyvczbvicvzladudsoc.supabase.co"; 
-    const SUPABASE_ANON_KEY = "sb_publishable_0JFl_gKwJ2DcSgQpSx8-tQ_nnEGYMjU4NzgxOTM0Njg1MTQyNDYzOTU0MjI0NzAyMjA5Mjk3NzYyNDI1Mjk3";
+    const SUPABASE_ANON_KEY = "sb_publishable_0JFl_gKwJ2DcSQGqSx8-tQ_nnEGYr-o";
     
     const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -65,7 +65,7 @@
             const fileExtension = file.name.split('.').pop();
             const fileName = `${Date.now()}.${fileExtension}`;
 
-            // Upload image to your receipts storage bucket
+            // This line sends the image file to your receipts storage bucket folder
             const { data: storageData, error: storageError } = await supabase.storage
                 .from('receipts')
                 .upload(fileName, file);
@@ -78,7 +78,7 @@
                 
             const imageUrl = urlData.publicUrl;
 
-            // Save Name, Phone, and the Image Link to your uploads database table
+            // This line saves the text (Name/Phone) and image link into your database spreadsheet
             const { error: dbError } = await supabase
                 .from('uploads')
                 .insert([{ name: name, phone: phone, image_url: imageUrl }]);
