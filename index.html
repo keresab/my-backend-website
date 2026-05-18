@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Your Receipt</title>
+    <title>Contact Registration</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
@@ -11,7 +11,7 @@
         h2 { margin-bottom: 20px; color: #333; text-align: center; }
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #666; font-weight: bold; }
-        input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="tel"], input[type="email"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #24b47e; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
         button:hover { background: #1f9d6d; }
         #statusMessage { margin-top: 15px; text-align: center; font-weight: bold; }
@@ -20,8 +20,8 @@
 <body>
 
 <div class="form-container">
-    <h2>Upload Screenshot</h2>
-    <form id="uploadForm">
+    <h2>Register Contact Info</h2>
+    <form id="contactForm">
         <div class="input-group">
             <label for="username">Full Name</label>
             <input type="text" id="username" required placeholder="John Doe">
@@ -31,21 +31,22 @@
             <input type="tel" id="userphone" required placeholder="+123456789">
         </div>
         <div class="input-group">
-            <label for="screenshot">Upload Screenshot/Receipt</label>
-            <input type="file" id="screenshot" accept="image/*" required>
+            <label for="useremail">Email Address</label>
+            <input type="email" id="useremail" required placeholder="john@example.com">
         </div>
-        <button type="submit" id="submitBtn">Submit Data</button>
+        <button type="submit" id="submitBtn">Submit Info</button>
     </form>
     <div id="statusMessage"></div>
 </div>
 
 <script>
+    // Your exact Supabase keys
     const SUPABASE_URL = "https://hfyvczbvicvzladudsoc.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_0JFl_gKwJ2DcSQGqSx8-tQ_nnEGYr-o";
     
     const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const submitBtn = document.getElementById('submitBtn');
@@ -53,38 +54,23 @@
         
         submitBtn.disabled = true;
         statusMessage.style.color = "orange";
-        statusMessage.innerText = "Uploading data... please wait.";
+        statusMessage.innerText = "Saving data... please wait.";
 
         const name = document.getElementById('username').value;
         const phone = document.getElementById('userphone').value;
-        const fileInput = document.getElementById('screenshot');
-        const file = fileInput.files[0];
+        const email = document.getElementById('useremail').value;
 
         try {
-            const fileExtension = file.name.split('.').pop();
-            const fileName = `${Date.now()}.${fileExtension}`;
-
-            const { data: storageData, error: storageError } = await supabase.storage
-                .from('receipts')
-                .upload(fileName, file);
-
-            if (storageError) throw storageError;
-
-            const { data: urlData } = supabase.storage
-                .from('receipts')
-                .getPublicUrl(fileName);
-                
-            const imageUrl = urlData.publicUrl;
-
+            // This sends the text straight to your new contacts table
             const { error: dbError } = await supabase
-                .from('uploads')
-                .insert([{ name: name, phone: phone, image_url: imageUrl }]);
+                .from('contacts')
+                .insert([{ name: name, phone: phone, email: email }]);
 
             if (dbError) throw dbError;
 
             statusMessage.style.color = "green";
-            statusMessage.innerText = "Success! Data and image saved.";
-            document.getElementById('uploadForm').reset();
+            statusMessage.innerText = "Success! Contact info saved.";
+            document.getElementById('contactForm').reset();
 
         } catch (error) {
             console.error(error);
