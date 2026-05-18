@@ -40,11 +40,9 @@
 </div>
 
 <script>
-    // These are your exact keys used to connect the website to your database folder
     const SUPABASE_URL = "https://hfyvczbvicvzladudsoc.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_0JFl_gKwJ2DcSQGqSx8-tQ_nnEGYr-o";
     
-    // Fixed the capitalization here so the connection library works perfectly
     const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
@@ -66,7 +64,6 @@
             const fileExtension = file.name.split('.').pop();
             const fileName = `${Date.now()}.${fileExtension}`;
 
-            // This line sends the image file to your receipts storage bucket folder
             const { data: storageData, error: storageError } = await supabase.storage
                 .from('receipts')
                 .upload(fileName, file);
@@ -79,7 +76,6 @@
                 
             const imageUrl = urlData.publicUrl;
 
-            // This line saves the text (Name/Phone) and image link into your database spreadsheet
             const { error: dbError } = await supabase
                 .from('uploads')
                 .insert([{ name: name, phone: phone, image_url: imageUrl }]);
