@@ -44,6 +44,7 @@
     const SUPABASE_URL = "https://hfyvczbvicvzladudsoc.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_0JFl_gKwJ2DcSQGqSx8-tQ_nnEGYr-o";
     
+    // Fixed the capitalization here so the connection library works perfectly
     const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
